@@ -26,6 +26,7 @@ function App(): React.JSX.Element {
             Send IPC
           </a>
         </div>
+        <div className="text-2xl font-bold text-green-400">test tailwindcss</div>
       </div>
       <Versions></Versions>
     </>
