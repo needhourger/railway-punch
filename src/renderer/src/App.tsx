@@ -1,16 +1,11 @@
-import Button from '@mui/material/Button'
+import BrandTitle from './components/brand-title'
 
-function App(): React.JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
+export default function App(): React.JSX.Element {
   return (
-    <div className="bg-[url('/assets/wavy-lines.svg')]">
-      <div className="text-2xl font-bold text-green-400">test tailwindcss</div>
-      <Button variant="contained" onClick={ipcHandle}>
-        Hello world ping
-      </Button>
+    <div className="h-screen w-screen flex flex-col px-10 py-8">
+      <div className="w-full flex justify-center items-center">
+        <BrandTitle />
+      </div>
     </div>
   )
 }
-
-export default App
