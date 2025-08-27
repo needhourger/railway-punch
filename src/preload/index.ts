@@ -15,6 +15,9 @@ if (process.contextIsolated) {
       toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
       system: () => ipcRenderer.invoke('dark-mode:system')
     })
+    contextBridge.exposeInMainWorld('loadIcs', {
+      read: () => ipcRenderer.invoke('load-ics')
+    })
   } catch (error) {
     console.error(error)
   }

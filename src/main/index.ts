@@ -1,7 +1,10 @@
-import { app, shell, BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { join } from 'path'
+import { app, shell, BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import icsFile from '../../resources/cn_zh.ics?asset'
+import * as fs from 'node:fs'
+import { convertIcsCalendar } from 'ts-ics'
 
 function createWindow(): void {
   // Create the browser window.
@@ -62,6 +65,16 @@ app.whenReady().then(() => {
       nativeTheme.themeSource = 'dark'
     }
     return nativeTheme.shouldUseDarkColors
+  })
+
+  ipcMain.handle('load-ics', async (event) => {
+    try {
+      const data = fs.readFileSync(icsFile, 'utf-8')
+      return convertIcsCalendar(undefined, data)
+    } catch (error) {
+      console.error('Error reading file:', error)
+      throw error
+    }
   })
 
   createWindow()
