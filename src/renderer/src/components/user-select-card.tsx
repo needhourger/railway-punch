@@ -3,7 +3,7 @@ import { AccountBox } from '@mui/icons-material'
 
 export default function UserSelectCard(): React.JSX.Element {
   return (
-    <Card className="w-full p-8">
+    <Card className="w-full p-8 mb-4">
       <div className="flex items-center mb-4">
         <AccountBox fontSize="large" className="" />
         <span className="text-2xl font-bold  ml-2">用户选择</span>
