@@ -4,6 +4,7 @@ import useIcsCalendar from '@renderer/hooks/ics-calendar'
 import { getMonthDays } from '@renderer/libs/month'
 import React from 'react'
 import { IcsEvent } from 'ts-ics'
+import PunchBox from './punch-box'
 
 export default function CalendarCard(): React.JSX.Element {
   const [year, setYear] = React.useState<number>(new Date().getFullYear())
@@ -55,7 +56,7 @@ export default function CalendarCard(): React.JSX.Element {
       date.getDay() === 6
     if (dayEvents.current === null)
       return (
-        <div className="flex items-start justify-between px-2 py-4 h-32">
+        <div className="flex items-start justify-between px-2 py-4 h-24">
           <div className={`text-xl font-extrabold ${isRestDay ? 'text-red-400' : ''}`}>
             {date.getDate()}
           </div>
@@ -68,7 +69,7 @@ export default function CalendarCard(): React.JSX.Element {
       return 'text-green-300'
     }
     return (
-      <div className="flex items-start justify-between px-2 py-4 h-32">
+      <div className="flex items-start justify-between px-2 py-4 h-24">
         <div className={`text-xl font-extrabold ${isRestDay ? 'text-red-400' : ''}`}>
           {date.getDate()}
         </div>
@@ -139,6 +140,7 @@ export default function CalendarCard(): React.JSX.Element {
             <CardActionArea>
               <div className={`${isToday(day) ? 'bg-blue-400/50' : ''}`}>
                 <DayEventLabel date={day} />
+                <PunchBox date={day} />
               </div>
             </CardActionArea>
           </Card>
