@@ -1,21 +1,52 @@
 import { Card, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { AccountBox } from '@mui/icons-material'
+import React from 'react'
+import store from '@renderer/store'
+import AddUserButton from './add-user-button'
+import { ManageUserButton } from './manage-user-button'
 
 export default function UserSelectCard(): React.JSX.Element {
+  const [users, setUsers] = React.useState<string[]>([])
+  const [currentUser, setCurrentUser] = React.useState('')
+
+  React.useEffect(() => {
+    refreshUsers()
+  }, [])
+
+  const refreshUsers = async (): Promise<void> => {
+    const tmp = await store.get('users')
+    if (tmp) {
+      setUsers(tmp)
+    }
+  }
+
   return (
     <Card className="w-full p-8 mb-4">
-      <div className="flex items-center mb-4">
+      <div className="flex items-center mb-8">
         <AccountBox fontSize="large" className="" />
         <span className="text-2xl font-bold  ml-2">用户选择</span>
       </div>
-      <FormControl className="w-1/3">
-        <InputLabel id="user-select-label">选择用户</InputLabel>
-        <Select labelId="user-select-label" label="选择用户" defaultValue="">
-          <MenuItem value="">张三</MenuItem>
-          <MenuItem value="">李四</MenuItem>
-          <MenuItem value="">王五</MenuItem>
-        </Select>
-      </FormControl>
+      <div className="flex gap-4">
+        <FormControl className="w-1/3">
+          <InputLabel id="user-select-label">选择用户</InputLabel>
+          <Select
+            value={currentUser}
+            onChange={(e) => setCurrentUser(e.target.value)}
+            labelId="user-select-label"
+            label="选择用户"
+            defaultValue=""
+          >
+            {users &&
+              users.map((username, index) => (
+                <MenuItem key={index} value={username}>
+                  {username}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+        <AddUserButton onChange={() => refreshUsers()} users={users} />
+        <ManageUserButton onChange={() => refreshUsers()} />
+      </div>
     </Card>
   )
 }

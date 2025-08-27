@@ -5,6 +5,10 @@ import icon from '../../resources/icon.png?asset'
 import icsFile from '../../resources/cn_zh.ics?asset'
 import * as fs from 'node:fs'
 import { convertIcsCalendar, IcsCalendar } from 'ts-ics'
+import { Conf } from 'electron-conf/main'
+
+const conf = new Conf()
+conf.registerRendererListener()
 
 function createWindow(): void {
   // Create the browser window.
