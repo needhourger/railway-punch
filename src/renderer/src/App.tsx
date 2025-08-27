@@ -16,7 +16,6 @@ export default function App(): React.JSX.Element {
       .read()
       .then((data) => {
         icsRef.current = data
-        console.log(icsRef.current?.events)
       })
       .catch((err) => {
         console.error('Failed to load ICS file:', err)

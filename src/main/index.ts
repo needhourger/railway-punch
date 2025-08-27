@@ -4,7 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import icsFile from '../../resources/cn_zh.ics?asset'
 import * as fs from 'node:fs'
-import { convertIcsCalendar } from 'ts-ics'
+import { convertIcsCalendar, IcsCalendar } from 'ts-ics'
 
 function createWindow(): void {
   // Create the browser window.
@@ -67,7 +67,7 @@ app.whenReady().then(() => {
     return nativeTheme.shouldUseDarkColors
   })
 
-  ipcMain.handle('load-ics', async (event) => {
+  ipcMain.handle('load-ics', async (event): Promise<IcsCalendar | null> => {
     try {
       const data = fs.readFileSync(icsFile, 'utf-8')
       return convertIcsCalendar(undefined, data)
