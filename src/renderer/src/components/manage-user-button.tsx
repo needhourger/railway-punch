@@ -5,24 +5,14 @@ import React from 'react'
 
 interface ManageUserButtonProps {
   onChange: () => void
+  users: string[]
 }
-export function ManageUserButton({ onChange }: ManageUserButtonProps): React.JSX.Element {
+export function ManageUserButton({ onChange, users }: ManageUserButtonProps): React.JSX.Element {
   const [visible, setVisible] = React.useState(false)
-  const [users, setUsers] = React.useState<string[]>([])
-
-  const refreshUsers = async (): Promise<void> => {
-    const tmp = await store.get('users')
-    if (tmp) setUsers(tmp)
-  }
-
-  React.useEffect(() => {
-    refreshUsers()
-  }, [])
 
   const handleRemoveUser = async (username: string): Promise<void> => {
-    const newUsers = users.filter((i) => i === username)
+    const newUsers = users.filter((i) => i !== username)
     await store.set('users', newUsers)
-    refreshUsers()
     onChange()
   }
 

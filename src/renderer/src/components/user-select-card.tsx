@@ -17,6 +17,8 @@ export default function UserSelectCard(): React.JSX.Element {
     const tmp = await store.get('users')
     if (tmp) {
       setUsers(tmp)
+    } else {
+      setUsers([])
     }
   }
 
@@ -45,7 +47,7 @@ export default function UserSelectCard(): React.JSX.Element {
           </Select>
         </FormControl>
         <AddUserButton onChange={() => refreshUsers()} users={users} />
-        <ManageUserButton onChange={() => refreshUsers()} />
+        <ManageUserButton onChange={() => refreshUsers()} users={users} />
       </div>
     </Card>
   )
