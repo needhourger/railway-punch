@@ -1,5 +1,12 @@
 import { Close } from '@mui/icons-material'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from '@mui/material'
 import store from '@renderer/store'
 import React from 'react'
 
@@ -24,6 +31,9 @@ export function ManageUserButton({ onChange, users }: ManageUserButtonProps): Re
       <Dialog open={visible}>
         <DialogTitle>用户管理</DialogTitle>
         <DialogContent className="flex gap-2 w-120 flex-wrap">
+          <DialogContentText>
+            <span className="text-red-500">警告：删除用户意味着删除用户所有的对应记录</span>
+          </DialogContentText>
           {users &&
             users.map((item, index) => (
               <Button key={index} onClick={() => handleRemoveUser(item)} variant="outlined">
