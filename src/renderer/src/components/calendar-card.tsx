@@ -1,5 +1,13 @@
 import { CalendarMonth } from '@mui/icons-material'
-import { Card, CardActionArea, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import {
+  Button,
+  Card,
+  CardActionArea,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select
+} from '@mui/material'
 import useIcsCalendar from '@renderer/hooks/ics-calendar'
 import { getMonthDays } from '@renderer/libs/month'
 import React from 'react'
@@ -30,6 +38,12 @@ export default function CalendarCard(): React.JSX.Element {
     setEmptyDays(firstDay.getDay())
     setDayOfMonth(days)
   }, [year, month])
+
+  const locateCurrentMonth = (): void => {
+    const today = new Date()
+    setYear(today.getFullYear())
+    setMonth(today.getMonth())
+  }
 
   const getDayLabelClass = (day: string): string => {
     const isWeekEnd = day === '日' || day === '六'
@@ -91,7 +105,10 @@ export default function CalendarCard(): React.JSX.Element {
           <CalendarMonth fontSize="large" />
           <span className="text-2xl font-bold ml-2">日历</span>
         </div>
-        <div className="flex items-baseline">
+        <div className="flex items-baseline gap-2">
+          <Button onClick={() => locateCurrentMonth()} size="large" variant="contained">
+            跳转当月
+          </Button>
           <FormControl>
             <InputLabel id="year-select-label">年份</InputLabel>
             <Select
