@@ -33,6 +33,7 @@ export default function AddUserButton({ onChange, users }: AddUserButtonProps): 
       setAddUserDialogOpen(false)
       setNewUsername('')
       setDuplicateTip(false)
+      await store.set(`records.${newUsername}`, {})
     }
   }
   return (

@@ -20,6 +20,7 @@ export function ManageUserButton({ onChange, users }: ManageUserButtonProps): Re
   const handleRemoveUser = async (username: string): Promise<void> => {
     const newUsers = users.filter((i) => i !== username)
     await store.set('users', newUsers)
+    await store.delete(`records.${username}`)
     onChange()
   }
 
