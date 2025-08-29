@@ -21,7 +21,7 @@ export default function CalendarCard(): React.JSX.Element {
   const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六']
   const [dayOfMonth, setDayOfMonth] = React.useState<Date[]>([])
   const [emptyDays, setEmptyDays] = React.useState<number>(0)
-  const [getDateType] = useIcsCalendar()
+  const { getDateEvents } = useIcsCalendar()
 
   React.useEffect(() => {
     const currentYear = new Date().getFullYear()
@@ -63,7 +63,7 @@ export default function CalendarCard(): React.JSX.Element {
   }
 
   const DayEventLabel: React.FC<{ date: Date }> = ({ date }) => {
-    const dayEvents = React.useRef<IcsEvent[] | null>(getDateType(date))
+    const dayEvents = React.useRef<IcsEvent[] | null>(getDateEvents(date))
     const isRestDay =
       dayEvents.current?.some((v) => v.summary.includes('休')) ||
       date.getDay() === 0 ||
@@ -87,7 +87,7 @@ export default function CalendarCard(): React.JSX.Element {
         <div className={`text-xl font-extrabold ${isRestDay ? 'text-red-400' : ''}`}>
           {date.getDate()}
         </div>
-        <div className="font-bold text-sm flex flex-col">
+        <div className="font-bold text-sm flex flex-col mt-2">
           {dayEvents.current.map((event, index) => (
             <span key={index} className={`${getEventClass(event.summary)}`}>
               {event.summary}

@@ -3,6 +3,7 @@ import BrandTitle from './components/brand-title'
 import UserSelectCard from './components/user-select-card'
 import React from 'react'
 import CalendarCard from './components/calendar-card'
+import AppContextProvider from './components/app-context-provider'
 
 const theme = createTheme({
   colorSchemes: {
@@ -13,13 +14,15 @@ const theme = createTheme({
 export default function App(): React.JSX.Element {
   return (
     <ThemeProvider theme={theme}>
-      <div className="h-screen w-screen flex flex-col py-8">
-        <BrandTitle />
-        <div className="min-h-full overflow-y-auto px-10 pb-20">
-          <UserSelectCard />
-          <CalendarCard />
+      <AppContextProvider>
+        <div className="h-screen w-screen flex flex-col py-8">
+          <BrandTitle />
+          <div className="min-h-full overflow-y-auto px-10 pb-20">
+            <UserSelectCard />
+            <CalendarCard />
+          </div>
         </div>
-      </div>
+      </AppContextProvider>
     </ThemeProvider>
   )
 }

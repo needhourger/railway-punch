@@ -4,10 +4,11 @@ import React from 'react'
 import store from '@renderer/store'
 import AddUserButton from './add-user-button'
 import { ManageUserButton } from './manage-user-button'
+import useAppContext from '@renderer/context/app-context'
 
 export default function UserSelectCard(): React.JSX.Element {
   const [users, setUsers] = React.useState<string[]>([])
-  const [currentUser, setCurrentUser] = React.useState('')
+  const { currentUser, setCurrentUser } = useAppContext()
 
   React.useEffect(() => {
     refreshUsers()
@@ -16,7 +17,7 @@ export default function UserSelectCard(): React.JSX.Element {
   const refreshUsers = async (): Promise<void> => {
     const tmp = await store.get('users')
     if (tmp) {
-      setUsers(tmp)
+      setUsers(tmp as string[])
     } else {
       setUsers([])
     }
