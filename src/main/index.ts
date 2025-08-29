@@ -1,11 +1,12 @@
 import { join } from 'path'
-import { app, shell, BrowserWindow, ipcMain, nativeTheme } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, nativeTheme, dialog } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import icsFile from '../../resources/cn_zh.ics?asset'
 import * as fs from 'node:fs'
 import { convertIcsCalendar, IcsCalendar } from 'ts-ics'
 import { Conf } from 'electron-conf/main'
+import path from 'node:path'
 
 const conf = new Conf()
 conf.registerRendererListener()
@@ -71,7 +72,29 @@ app.whenReady().then(() => {
     return nativeTheme.shouldUseDarkColors
   })
 
+  ipcMain.handle('export-file', async (event, data, filename) => {
+    try {
+      const result = await dialog.showSaveDialog({
+        title: '导出记录',
+        defaultPath: path.join(app.getPath('downloads'), filename),
+        filters: [
+          { name: 'JSON', extensions: ['json'] },
+          { name: '所有文件', extensions: ['*'] }
+        ]
+      })
+      console.log(data, result)
+      if (!result.canceled && result.filePath) {
+        await fs.promises.writeFile(result.filePath, data, 'utf-8')
+        return { success: true, filePath: result.filePath }
+      }
+      return { success: false, message: '用户取消了保存' }
+    } catch (err) {
+      return { success: false, message: err }
+    }
+  })
+
   ipcMain.handle('load-ics', async (event): Promise<IcsCalendar | null> => {
+    console.log(event)
     try {
       const data = fs.readFileSync(icsFile, 'utf-8')
       return convertIcsCalendar(undefined, data)

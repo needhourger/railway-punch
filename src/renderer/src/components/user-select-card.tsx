@@ -1,4 +1,4 @@
-import { Card, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import { Card, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material'
 import { AccountBox } from '@mui/icons-material'
 import React from 'react'
 import store from '@renderer/store'
@@ -7,20 +7,13 @@ import { ManageUserButton } from './manage-user-button'
 import useAppContext from '@renderer/context/app-context'
 
 export default function UserSelectCard(): React.JSX.Element {
-  const [users, setUsers] = React.useState<string[]>([])
-  const { currentUser, setCurrentUser } = useAppContext()
+  const { users, currentUser, setCurrentUser } = useAppContext()
 
-  React.useEffect(() => {
-    refreshUsers()
-  }, [])
-
-  const refreshUsers = async (): Promise<void> => {
-    const tmp = await store.get('users')
-    if (tmp) {
-      setUsers(tmp as string[])
-    } else {
-      setUsers([])
-    }
+  const handleOutput = async (): Promise<void> => {
+    if (!currentUser) return
+    const data = await store.get(`records.${currentUser}`)
+    console.log(data)
+    window.api.exportFile(data, 'test.json')
   }
 
   return (
@@ -47,8 +40,13 @@ export default function UserSelectCard(): React.JSX.Element {
               ))}
           </Select>
         </FormControl>
-        <AddUserButton onChange={() => refreshUsers()} users={users} />
-        <ManageUserButton onChange={() => refreshUsers()} users={users} />
+        <AddUserButton />
+        <ManageUserButton />
+        <div className="ms-auto">
+          <Button onClick={() => handleOutput()} size="large" disabled={!currentUser}>
+            导出该用户本月记录
+          </Button>
+        </div>
       </div>
     </Card>
   )

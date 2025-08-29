@@ -1,4 +1,4 @@
-import { Close, ReportOutlined } from '@mui/icons-material'
+import { Close } from '@mui/icons-material'
 import { Button, IconButton, Checkbox, FormControlLabel } from '@mui/material'
 import useAppContext from '@renderer/context/app-context'
 import useIcsCalendar from '@renderer/hooks/ics-calendar'

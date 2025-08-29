@@ -4,7 +4,9 @@ import { exposeConf } from 'electron-conf/preload'
 
 exposeConf()
 // Custom APIs for renderer
-const api = {}
+const api = {
+  exportFile: (data, filename) => ipcRenderer.invoke('export-file', data, filename)
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

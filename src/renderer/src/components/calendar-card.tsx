@@ -13,10 +13,10 @@ import { getMonthDays } from '@renderer/libs/month'
 import React from 'react'
 import { IcsEvent } from 'ts-ics'
 import PunchBox from './punch-box'
+import useAppContext from '@renderer/context/app-context'
 
 export default function CalendarCard(): React.JSX.Element {
-  const [year, setYear] = React.useState<number>(new Date().getFullYear())
-  const [month, setMonth] = React.useState<number>(new Date().getMonth())
+  const { currentYear, setCurrentYear, currentMonth, setCurrentMonth } = useAppContext()
   const [yearOptions, setYearOptions] = React.useState<number[]>([])
   const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六']
   const [dayOfMonth, setDayOfMonth] = React.useState<Date[]>([])
@@ -33,16 +33,16 @@ export default function CalendarCard(): React.JSX.Element {
   }, [])
 
   React.useEffect(() => {
-    const days = getMonthDays(year, month)
+    const days = getMonthDays(currentYear, currentMonth)
     const firstDay = days[0]
     setEmptyDays(firstDay.getDay())
     setDayOfMonth(days)
-  }, [year, month])
+  }, [currentYear, currentMonth])
 
   const locateCurrentMonth = (): void => {
     const today = new Date()
-    setYear(today.getFullYear())
-    setMonth(today.getMonth())
+    setCurrentYear(today.getFullYear())
+    setCurrentMonth(today.getMonth())
   }
 
   const getDayLabelClass = (day: string): string => {
@@ -112,8 +112,8 @@ export default function CalendarCard(): React.JSX.Element {
           <FormControl>
             <InputLabel id="year-select-label">年份</InputLabel>
             <Select
-              onChange={(e) => setYear(e.target.value as number)}
-              value={year}
+              onChange={(e) => setCurrentYear(e.target.value as number)}
+              value={currentYear}
               labelId="year-select-label"
               label="年份"
               className="w-36 mr-4"
@@ -128,8 +128,8 @@ export default function CalendarCard(): React.JSX.Element {
           <FormControl>
             <InputLabel id="month-select-label">月份</InputLabel>
             <Select
-              onChange={(e) => setMonth(e.target.value as number)}
-              value={month}
+              onChange={(e) => setCurrentMonth(e.target.value as number)}
+              value={currentMonth}
               labelId="month-select-label"
               label="月份"
               className="w-36"

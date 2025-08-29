@@ -1,8 +1,14 @@
 import React, { createContext } from 'react'
 
 interface AppContextType {
+  users: string[]
+  setUsers: (users: string[]) => void
   currentUser: string
   setCurrentUser: (username: string) => void
+  currentYear: number
+  setCurrentYear: (year: number) => void
+  currentMonth: number
+  setCurrentMonth: (month: number) => void
 }
 export const AppContext = createContext<AppContextType | undefined>(undefined)
 

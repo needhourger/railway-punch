@@ -10,17 +10,13 @@ import {
   FormControl
 } from '@mui/material'
 import { PersonAddAlt } from '@mui/icons-material'
-import store from '@renderer/store'
+import useAppContext from '@renderer/context/app-context'
 
-interface AddUserButtonProps {
-  onChange: () => void
-  users: string[]
-}
-
-export default function AddUserButton({ onChange, users }: AddUserButtonProps): React.JSX.Element {
+export default function AddUserButton(): React.JSX.Element {
   const [newUsername, setNewUsername] = React.useState('')
   const [addUserDialogOpen, setAddUserDialogOpen] = React.useState(false)
   const [duplicate, setDuplicateTip] = React.useState(false)
+  const { users, setUsers } = useAppContext()
 
   const handleAddUser = async (): Promise<void> => {
     if (newUsername) {
@@ -28,12 +24,10 @@ export default function AddUserButton({ onChange, users }: AddUserButtonProps): 
         setDuplicateTip(true)
         return
       }
-      await store.set('users', [newUsername, ...users])
-      onChange()
+      setUsers([...users, newUsername])
       setAddUserDialogOpen(false)
       setNewUsername('')
       setDuplicateTip(false)
-      await store.set(`records.${newUsername}`, {})
     }
   }
   return (
