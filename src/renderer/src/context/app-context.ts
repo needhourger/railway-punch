@@ -2,7 +2,9 @@ import React, { createContext } from 'react'
 
 interface AppContextType {
   users: string[]
-  setUsers: (users: string[]) => void
+  setStoreUsers: (users: string[]) => void
+  addStoreUser: (username: string) => void
+  deleteStoreUser: (username: string) => void
   currentUser: string
   setCurrentUser: (username: string) => void
   currentYear: number

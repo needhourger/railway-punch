@@ -18,21 +18,21 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
   const dateStr = getDateString(date)
 
   React.useEffect(() => {
-    refreshPunchRecord()
+    refreshPunchRecord(currentUser)
   }, [currentUser])
 
   React.useEffect(() => {
     if (record) {
       store.set(`records.${currentUser}.${dateStr}`, record)
     } else {
-      store.delete(`record.${currentUser}.${dateStr}`)
+      store.delete(`records.${currentUser}.${dateStr}`)
     }
   }, [record, currentUser, dateStr])
 
-  const refreshPunchRecord = async (): Promise<void> => {
+  const refreshPunchRecord = async (username: string): Promise<void> => {
     setRecord(null)
-    if (!currentUser) return
-    const records = (await store.get(`records.${currentUser}`)) as Record<string, PunchRecord>
+    if (!username) return
+    const records = (await store.get(`records.${username}`)) as Record<string, PunchRecord>
     if (!records) return
     if (dateStr in records) {
       setRecord(records[dateStr])

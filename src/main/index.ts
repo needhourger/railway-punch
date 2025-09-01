@@ -7,6 +7,7 @@ import * as fs from 'node:fs'
 import { convertIcsCalendar, IcsCalendar } from 'ts-ics'
 import { Conf } from 'electron-conf/main'
 import path from 'node:path'
+import * as XLSX from 'xlsx'
 
 const conf = new Conf()
 conf.registerRendererListener()
@@ -78,17 +79,22 @@ app.whenReady().then(() => {
         title: '导出记录',
         defaultPath: path.join(app.getPath('downloads'), filename),
         filters: [
-          { name: 'JSON', extensions: ['json'] },
+          // { name: 'JSON', extensions: ['json'] },
+          { name: 'excel', extensions: ['xls', 'xlsx'] },
           { name: '所有文件', extensions: ['*'] }
         ]
       })
       console.log(data, result)
       if (!result.canceled && result.filePath) {
-        await fs.promises.writeFile(result.filePath, data, 'utf-8')
+        const templatePath = path.resolve('../../resources/template.xls?asset')
+        const workbook = XLSX.readFile(templatePath)
+        // XLSX.utils.book_append_sheet(workbook, worksheet, 'test')
+        XLSX.writeFile(workbook, result.filePath, { compression: true })
         return { success: true, filePath: result.filePath }
       }
       return { success: false, message: '用户取消了保存' }
     } catch (err) {
+      console.log(err)
       return { success: false, message: err }
     }
   })

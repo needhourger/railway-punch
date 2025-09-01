@@ -8,17 +8,14 @@ import {
   DialogTitle
 } from '@mui/material'
 import useAppContext from '@renderer/context/app-context'
-import store from '@renderer/store'
 import React from 'react'
 
 export function ManageUserButton(): React.JSX.Element {
   const [visible, setVisible] = React.useState(false)
-  const { users, setUsers } = useAppContext()
+  const { users, deleteStoreUser } = useAppContext()
 
   const handleRemoveUser = async (username: string): Promise<void> => {
-    const newUsers = users.filter((i) => i !== username)
-    await store.delete(`records.${username}`)
-    setUsers(newUsers)
+    deleteStoreUser(username)
   }
 
   return (

@@ -5,15 +5,50 @@ import store from '@renderer/store'
 import AddUserButton from './add-user-button'
 import { ManageUserButton } from './manage-user-button'
 import useAppContext from '@renderer/context/app-context'
+import { getMonthDays } from '@renderer/libs/month'
+import { getDateString } from '@renderer/libs'
+import { PunchRecord } from '@renderer/types'
 
 export default function UserSelectCard(): React.JSX.Element {
-  const { users, currentUser, setCurrentUser } = useAppContext()
+  const { users, currentUser, setCurrentUser, currentYear, currentMonth } = useAppContext()
+
+  const getSingleUserOutput = async (username: string): Promise<number[][]> => {
+    const data = (await store.get(`records.${username}`)) as Record<string, PunchRecord>
+    const monthDays = getMonthDays(currentYear, currentMonth)
+    const outputData: number[][] = []
+    let currentDay = 0
+    const LINE_LENGTH = 16
+    const addToOutputData = (data: number[], currentDay: number): void => {
+      const currentLine = Math.floor(currentDay / LINE_LENGTH)
+      if (outputData[currentLine]) {
+        outputData[currentLine].push(...data)
+      } else {
+        outputData.push(data)
+      }
+    }
+    for (const date of monthDays) {
+      const dateStr = getDateString(date)
+      const punchRecord = data[dateStr] as PunchRecord
+      if (punchRecord) {
+        const attendancePoints = 5
+        const qualityPoints = punchRecord.isBusinessTrip ? 50 : 30
+        addToOutputData([attendancePoints, qualityPoints, punchRecord.extraPoints], currentDay)
+      } else {
+        addToOutputData([0, 0, 0], currentDay)
+      }
+      currentDay += 1
+    }
+    return outputData
+  }
 
   const handleOutput = async (): Promise<void> => {
-    if (!currentUser) return
-    const data = await store.get(`records.${currentUser}`)
-    console.log(data)
-    window.api.exportFile(data, 'test.json')
+    let outputData: number[][] = []
+    for (const username of users) {
+      const singleUserData = await getSingleUserOutput(username)
+      outputData = outputData.concat(singleUserData)
+    }
+    const outputFileName = `${currentYear}-${currentMonth}.xlsx`
+    window.api.exportFile(outputData, outputFileName)
   }
 
   return (
@@ -43,8 +78,8 @@ export default function UserSelectCard(): React.JSX.Element {
         <AddUserButton />
         <ManageUserButton />
         <div className="ms-auto">
-          <Button onClick={() => handleOutput()} size="large" disabled={!currentUser}>
-            导出该用户本月记录
+          <Button onClick={() => handleOutput()} size="large">
+            导出本月记录
           </Button>
         </div>
       </div>

@@ -16,7 +16,7 @@ export default function AddUserButton(): React.JSX.Element {
   const [newUsername, setNewUsername] = React.useState('')
   const [addUserDialogOpen, setAddUserDialogOpen] = React.useState(false)
   const [duplicate, setDuplicateTip] = React.useState(false)
-  const { users, setUsers } = useAppContext()
+  const { users, addStoreUser } = useAppContext()
 
   const handleAddUser = async (): Promise<void> => {
     if (newUsername) {
@@ -24,7 +24,7 @@ export default function AddUserButton(): React.JSX.Element {
         setDuplicateTip(true)
         return
       }
-      setUsers([...users, newUsername])
+      addStoreUser(newUsername)
       setAddUserDialogOpen(false)
       setNewUsername('')
       setDuplicateTip(false)
