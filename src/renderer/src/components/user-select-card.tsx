@@ -12,40 +12,29 @@ import { PunchRecord } from '@renderer/types'
 export default function UserSelectCard(): React.JSX.Element {
   const { users, currentUser, setCurrentUser, currentYear, currentMonth } = useAppContext()
 
-  const getSingleUserOutput = async (username: string): Promise<number[][]> => {
+  const getSingleUserOutput = async (username: string): Promise<number[]> => {
     const data = (await store.get(`records.${username}`)) as Record<string, PunchRecord>
     const monthDays = getMonthDays(currentYear, currentMonth)
-    const outputData: number[][] = []
-    let currentDay = 0
-    const LINE_LENGTH = 16
-    const addToOutputData = (data: number[], currentDay: number): void => {
-      const currentLine = Math.floor(currentDay / LINE_LENGTH)
-      if (outputData[currentLine]) {
-        outputData[currentLine].push(...data)
-      } else {
-        outputData.push(data)
-      }
-    }
+    const outputData: number[] = []
     for (const date of monthDays) {
       const dateStr = getDateString(date)
       const punchRecord = data[dateStr] as PunchRecord
       if (punchRecord) {
         const attendancePoints = 5
         const qualityPoints = punchRecord.isBusinessTrip ? 50 : 30
-        addToOutputData([attendancePoints, qualityPoints, punchRecord.extraPoints], currentDay)
+        outputData.push(attendancePoints, qualityPoints, punchRecord.extraPoints)
       } else {
-        addToOutputData([0, 0, 0], currentDay)
+        outputData.push(0, 0, 0)
       }
-      currentDay += 1
     }
     return outputData
   }
 
   const handleOutput = async (): Promise<void> => {
-    let outputData: number[][] = []
+    const outputData: Record<string, number[]> = {}
     for (const username of users) {
       const singleUserData = await getSingleUserOutput(username)
-      outputData = outputData.concat(singleUserData)
+      outputData[username] = singleUserData
     }
     const outputFileName = `${currentYear}-${currentMonth}.xlsx`
     window.api.exportFile(outputData, outputFileName)

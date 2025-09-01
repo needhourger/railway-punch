@@ -7,7 +7,7 @@ import * as fs from 'node:fs'
 import { convertIcsCalendar, IcsCalendar } from 'ts-ics'
 import { Conf } from 'electron-conf/main'
 import path from 'node:path'
-import * as XLSX from 'xlsx'
+import * as exceljs from 'exceljs/dist/es5'
 
 const conf = new Conf()
 conf.registerRendererListener()
@@ -75,22 +75,60 @@ app.whenReady().then(() => {
 
   ipcMain.handle('export-file', async (event, data, filename) => {
     try {
-      const result = await dialog.showSaveDialog({
-        title: '导出记录',
-        defaultPath: path.join(app.getPath('downloads'), filename),
+      const selectResult = await dialog.showOpenDialog({
+        title: '选择模板文件',
+        defaultPath: path.join(app.getPath('downloads')),
         filters: [
           // { name: 'JSON', extensions: ['json'] },
           { name: 'excel', extensions: ['xls', 'xlsx'] },
           { name: '所有文件', extensions: ['*'] }
         ]
       })
-      console.log(data, result)
-      if (!result.canceled && result.filePath) {
-        const templatePath = path.resolve('../../resources/template.xls?asset')
-        const workbook = XLSX.readFile(templatePath)
-        // XLSX.utils.book_append_sheet(workbook, worksheet, 'test')
-        XLSX.writeFile(workbook, result.filePath, { compression: true })
-        return { success: true, filePath: result.filePath }
+      console.log(data, selectResult)
+      if (!selectResult.canceled && selectResult.filePaths) {
+        const templatePath = path.resolve(selectResult.filePaths[0])
+        const workbook = new exceljs.Workbook()
+        await workbook.xlsx.readFile(templatePath)
+        const outputResult = await dialog.showSaveDialog({
+          title: '选择输出文件',
+          defaultPath: path.join(app.getPath('downloads'), filename),
+          filters: [
+            { name: 'excel', extensions: ['xls', 'xlsx'] },
+            { name: '所有文件', extensions: ['*'] }
+          ]
+        })
+        if (!outputResult.canceled && outputResult.filePath) {
+          const START_ROW = 7
+          const NAME_COL = 2
+          const LINE_BREAK = 16 * 3
+          let currentRow = START_ROW
+          const worksheet = workbook.getWorksheet(1)
+          let rowUsername = worksheet.getRow(currentRow).getCell(NAME_COL).value
+          do {
+            console.log(rowUsername)
+            if (rowUsername in data) {
+              const userData = data[rowUsername]
+              if (userData) {
+                userData.map((item, index) => {
+                  if (index % LINE_BREAK === 0) {
+                    worksheet.getRow(currentRow).commit()
+                    currentRow += 1
+                  }
+                  worksheet
+                    .getRow(currentRow)
+                    .getCell(NAME_COL + ((index % LINE_BREAK) + 1)).value = item
+                  console.log(`write item for ${currentRow}-${NAME_COL + index + 1}`, item)
+                })
+                worksheet.getRow(currentRow).commit()
+              }
+            }
+            currentRow += 1
+            rowUsername = worksheet.getRow(currentRow).getCell(NAME_COL).value
+          } while (rowUsername && rowUsername !== '合计')
+          workbook.xlsx.writeFile(outputResult.filePath)
+          console.log('write file')
+          return { success: true, filePath: outputResult.filePath }
+        }
       }
       return { success: false, message: '用户取消了保存' }
     } catch (err) {
