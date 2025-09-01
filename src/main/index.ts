@@ -74,6 +74,7 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('export-file', async (event, data, filename) => {
+    console.log(event)
     try {
       const selectResult = await dialog.showOpenDialog({
         title: '选择模板文件',

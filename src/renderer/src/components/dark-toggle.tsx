@@ -9,8 +9,9 @@ export function DarkToggle(): React.JSX.Element {
     window.electron.ipcRenderer.send('dark-mode:toggle')
   }
   React.useEffect(() => {
-    const isDarkMode = window.darkMode.toggle()
-    setIsDarkMode(isDarkMode)
+    window.darkMode.toggle().then((isDarkMode) => {
+      setIsDarkMode(isDarkMode)
+    })
   }, [])
   return (
     <IconButton onClick={handleToggle} color="primary">

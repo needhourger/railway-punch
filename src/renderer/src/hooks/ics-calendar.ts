@@ -12,7 +12,7 @@ export default function useIcsCalendar(): {
       .read()
       .then((data) => {
         const dateMap = new Map<string, IcsEvent[]>()
-        data?.events.forEach((event: IcsEvent) => {
+        data?.events?.forEach((event: IcsEvent) => {
           if (event.end?.date) {
             const currentDate = new Date(event.start.date)
             while (currentDate <= event.end.date) {

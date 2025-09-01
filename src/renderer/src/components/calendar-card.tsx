@@ -149,7 +149,7 @@ export default function CalendarCard(): React.JSX.Element {
             {day}
           </div>
         ))}
-        {[...Array(emptyDays)].map((day, index) => (
+        {[...Array(emptyDays)].map((_, index) => (
           <div key={index}></div>
         ))}
         {dayOfMonth.map((day, index) => (
