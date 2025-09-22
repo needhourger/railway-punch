@@ -101,7 +101,7 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
   }
 
   return (
-    <div className="w-full p-2 h-24 flex flex-col justify-end">
+    <div className="w-full p-2 h-26 flex flex-col justify-end">
       {!record ? (
         <Button
           onClick={() => handlePunch()}
