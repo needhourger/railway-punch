@@ -20,7 +20,7 @@ export default function UserSelectCard(): React.JSX.Element {
       const dateStr = getDateString(date)
       const punchRecord = data[dateStr] as PunchRecord
       if (punchRecord) {
-        const attendancePoints = 5
+        const attendancePoints = punchRecord.isAnnualLeave ? 0 : 5
         const qualityPoints = punchRecord.isBusinessTrip ? 50 : 30
         outputData.push(attendancePoints, qualityPoints, punchRecord.extraPoints)
       } else {

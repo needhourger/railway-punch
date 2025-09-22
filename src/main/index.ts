@@ -99,7 +99,7 @@ app.whenReady().then(() => {
           ]
         })
         if (!outputResult.canceled && outputResult.filePath) {
-          const START_ROW = 7
+          const START_ROW = 6
           const NAME_COL = 2
           const LINE_BREAK = 16 * 3
           let currentRow = START_ROW

@@ -47,6 +47,7 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
     const record: PunchRecord = {
       isBusinessTrip: false,
       isWorkOvertime: isRestDay,
+      isAnnualLeave: false,
       extraPoints: 0
     }
     setRecord(record)
@@ -79,6 +80,22 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
     })
   }
 
+  const onAnnualLeaveChange = (newVal: boolean): void => {
+    setRecord((preVal) => {
+      if (preVal) {
+        const ret = {
+          ...preVal,
+          isAnnualLeave: newVal
+        }
+        if (newVal) {
+          ret.isBusinessTrip = false
+          ret.isWorkOvertime = false
+        }
+        return ret
+      }
+      return preVal
+    })
+  }
   const handleRemoveRecord = (): void => {
     setRecord(null)
   }
@@ -106,13 +123,29 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
             <FormControlLabel
               control={
                 <Checkbox
+                  checked={record.isAnnualLeave}
+                  onChange={(_, checked) => onAnnualLeaveChange(checked)}
+                  name="isAnnualLeave"
+                  color="primary"
+                  size="small"
+                />
+              }
+              label="年假"
+              className="text-xs text-red-500"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
                   checked={record.isBusinessTrip}
                   onChange={(_, checked) => onBusinessTripChange(checked)}
                   name="isBusinessTrip"
+                  disabled={record.isAnnualLeave}
                   color="success"
+                  size="small"
                 />
               }
               label="出差"
+              className="text-xs"
             />
             <FormControlLabel
               control={
@@ -121,9 +154,12 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
                   onChange={(_, checked) => onWorkOvertimeChange(checked)}
                   name="isWorkOvertime"
                   color="warning"
+                  disabled={record.isAnnualLeave}
+                  size="small"
                 />
               }
               label="加班"
+              className="text-xs"
             />
           </div>
           <div>
