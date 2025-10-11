@@ -73,7 +73,7 @@ app.whenReady().then(() => {
     return nativeTheme.shouldUseDarkColors
   })
 
-  ipcMain.handle('export-file', async (event, data, filename) => {
+  ipcMain.handle('export-file', async (event, startDate, endDate, data, filename) => {
     console.log(event)
     try {
       const selectResult = await dialog.showOpenDialog({
@@ -99,11 +99,24 @@ app.whenReady().then(() => {
           ]
         })
         if (!outputResult.canceled && outputResult.filePath) {
-          const START_ROW = 7
+          const worksheet = workbook.getWorksheet(1)
+          const DATE_START_ROW = 4
+          const DATE_COL = 3
+          const LINE_BREAK_DATE = 16
+          let index = 0
+          let currentDate = startDate
+          while (currentDate <= endDate) {
+            worksheet
+              .getRow(DATE_START_ROW + Math.floor(index / LINE_BREAK_DATE))
+              .getCell(DATE_COL + (index % LINE_BREAK_DATE)).value = currentDate.getDate()
+            currentDate = currentDate.getDate() + 1
+            index += 1
+          }
+
+          const EVENT_START_ROW = 7
           const NAME_COL = 2
           const LINE_BREAK = 16 * 3
-          let currentRow = START_ROW
-          const worksheet = workbook.getWorksheet(1)
+          let currentRow = EVENT_START_ROW
           let rowUsername = worksheet.getRow(currentRow).getCell(NAME_COL).value
           do {
             console.log(rowUsername)

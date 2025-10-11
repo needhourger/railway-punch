@@ -5,7 +5,7 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: {
-      exportFile: (data, filename) => void
+      exportFile: (startDate, endDate, data, filename) => void
     }
     darkMode: {
       toggle: () => Promise<boolean>

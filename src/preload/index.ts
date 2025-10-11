@@ -5,7 +5,8 @@ import { exposeConf } from 'electron-conf/preload'
 exposeConf()
 // Custom APIs for renderer
 const api = {
-  exportFile: (data, filename) => ipcRenderer.invoke('export-file', data, filename)
+  exportFile: (startDate, endDate, data, filename) =>
+    ipcRenderer.invoke('export-file', startDate, endDate, data, filename)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

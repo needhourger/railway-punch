@@ -63,7 +63,7 @@ export default function ExportRecordButton(): React.JSX.Element {
       outputData[username] = singleUserData
     }
     const outputFileName = `${currentYear}-${currentMonth}.xlsx`
-    window.api.exportFile(outputData, outputFileName)
+    window.api.exportFile(startDate, endDate, outputData, outputFileName)
   }
 
   const handleExport = (): void => {
