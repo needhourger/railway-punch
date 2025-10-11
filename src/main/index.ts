@@ -108,7 +108,8 @@ app.whenReady().then(() => {
           while (currentDate <= endDate) {
             worksheet
               .getRow(DATE_START_ROW + Math.floor(index / LINE_BREAK_DATE))
-              .getCell(DATE_COL + (index % LINE_BREAK_DATE)).value = currentDate.getDate()
+              .getCell(DATE_COL + (index % LINE_BREAK_DATE)).value = currentDate.getDate() + '日'
+            worksheet.getRow(DATE_START_ROW + Math.floor(index / LINE_BREAK_DATE)).commit()
             currentDate = currentDate.getDate() + 1
             index += 1
           }
