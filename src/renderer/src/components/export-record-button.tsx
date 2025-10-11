@@ -19,7 +19,7 @@ export default function ExportRecordButton(): React.JSX.Element {
   React.useEffect(() => {
     const lastMonth = dayjs(`${currentYear}-${currentMonth + 1}`)
       .subtract(1, 'month')
-      .date(25)
+      .date(26)
       .toDate()
     setStartDate(lastMonth)
     const thisMonth = dayjs(`${currentYear}-${currentMonth + 1}`)
@@ -39,7 +39,8 @@ export default function ExportRecordButton(): React.JSX.Element {
   ): Promise<number[]> => {
     const data = (await store.get(`records.${username}`)) as Record<string, PunchRecord>
     const outputData: number[] = []
-    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+    const currentDate = new Date(startDate)
+    for (let date = currentDate; date <= endDate; date.setDate(date.getDate() + 1)) {
       const dateStr = getDateString(date)
       const punchRecord = data[dateStr] as PunchRecord
       if (punchRecord) {
@@ -53,22 +54,29 @@ export default function ExportRecordButton(): React.JSX.Element {
     return outputData
   }
 
-  const handleOutput = async (startDate: Date | null, endDate: Date | null): Promise<void> => {
-    if (!startDate || !endDate) return
-    if (startDate > endDate) return
+  const handleOutput = async (start: Date, end: Date): Promise<void> => {
+    if (!start || !end) return
+    if (start > end) return
 
     const outputData: Record<string, number[]> = {}
     for (const username of users) {
-      const singleUserData = await getSingleUserOutput(username, startDate, endDate)
+      const singleUserData = await getSingleUserOutput(username, start, end)
       outputData[username] = singleUserData
     }
-    const outputFileName = `${currentYear}-${currentMonth}.xlsx`
-    window.api.exportFile(startDate, endDate, outputData, outputFileName)
+    const outputFileName = `${currentYear}-${currentMonth + 1}.xlsx`
+    console.log('start date', start)
+    console.log('end date', end)
+    window.api.exportFile(start, end, outputData, outputFileName)
   }
 
-  const handleExport = (): void => {
+  const handleExport = async (): Promise<void> => {
+    if (!startDate || !endDate) return
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    console.log('start', start)
+    console.log('end', end)
+    await handleOutput(start, end)
     setOpen(false)
-    handleOutput(startDate, endDate)
   }
 
   return (

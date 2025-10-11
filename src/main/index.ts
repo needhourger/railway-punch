@@ -74,7 +74,6 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('export-file', async (event, startDate, endDate, data, filename) => {
-    console.log(event)
     try {
       const selectResult = await dialog.showOpenDialog({
         title: '选择模板文件',
@@ -102,16 +101,19 @@ app.whenReady().then(() => {
           const worksheet = workbook.getWorksheet(1)
           const DATE_START_ROW = 4
           const DATE_COL = 3
-          const LINE_BREAK_DATE = 16
+          const LINE_BREAK_DATE = 16 * 3
           let index = 0
-          let currentDate = startDate
+          const currentDate = new Date(startDate)
+          console.log('start date', startDate)
+          console.log('end date', endDate)
           while (currentDate <= endDate) {
             worksheet
               .getRow(DATE_START_ROW + Math.floor(index / LINE_BREAK_DATE))
               .getCell(DATE_COL + (index % LINE_BREAK_DATE)).value = currentDate.getDate() + '日'
+            console.log('write date', currentDate.getDate())
             worksheet.getRow(DATE_START_ROW + Math.floor(index / LINE_BREAK_DATE)).commit()
-            currentDate = currentDate.getDate() + 1
-            index += 1
+            currentDate.setDate(currentDate.getDate() + 1)
+            index += 3
           }
 
           const EVENT_START_ROW = 7
@@ -132,7 +134,7 @@ app.whenReady().then(() => {
                   worksheet
                     .getRow(currentRow - 1)
                     .getCell(NAME_COL + ((index % LINE_BREAK) + 1)).value = item
-                  console.log(`write item for ${currentRow}-${NAME_COL + index + 1}`, item)
+                  // console.log(`write item for ${currentRow}-${NAME_COL + index + 1}`, item)
                 })
                 worksheet.getRow(currentRow - 1).commit()
               }
