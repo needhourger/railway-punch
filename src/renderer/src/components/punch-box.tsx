@@ -15,11 +15,26 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
   const { currentUser } = useAppContext()
   const [record, setRecord] = React.useState<PunchRecord | null>(null)
   const { getDateEvents } = useIcsCalendar()
-  const dateStr = getDateString(date)
+  const [dateStr, setDateStr] = React.useState<string>(getDateString(date))
 
   React.useEffect(() => {
-    refreshPunchRecord(currentUser)
-  }, [currentUser])
+    setDateStr(getDateString(date))
+  }, [date])
+
+  React.useEffect(() => {
+    const loadRecord = async (): Promise<void> => {
+      setRecord(null)
+      if (!currentUser) return
+      const records = (await store.get(`records.${currentUser}`)) as
+        | Record<string, PunchRecord>
+        | undefined
+      if (!records) return
+      if (dateStr in records) {
+        setRecord(records[dateStr])
+      }
+    }
+    loadRecord()
+  }, [currentUser, dateStr])
 
   React.useEffect(() => {
     if (record) {
@@ -28,16 +43,6 @@ export default function PunchBox({ date }: PunchBoxProps): React.JSX.Element {
       store.delete(`records.${currentUser}.${dateStr}`)
     }
   }, [record, currentUser, dateStr])
-
-  const refreshPunchRecord = async (username: string): Promise<void> => {
-    setRecord(null)
-    if (!username) return
-    const records = (await store.get(`records.${username}`)) as Record<string, PunchRecord>
-    if (!records) return
-    if (dateStr in records) {
-      setRecord(records[dateStr])
-    }
-  }
 
   const handlePunch = async (): Promise<void> => {
     if (!currentUser) return
