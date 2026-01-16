@@ -4,3 +4,5 @@ export interface PunchRecord {
   isAnnualLeave: boolean
   extraPoints: number
 }
+
+export type AttendanceStatus = 'day' | 'night' | 'rest' | 'annual'

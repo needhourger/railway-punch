@@ -5,6 +5,7 @@ import AppContextProvider from './components/app-context-provider'
 import Login from './components/login'
 import HomePage from './components/home-page'
 import FinancialPointsManagement from './components/financial-points-management'
+import AttendanceAnalysis from './components/attendance-analysis'
 import PlaceholderPage from './components/placeholder-page'
 
 const theme = createTheme({
@@ -40,7 +41,7 @@ export default function App(): React.JSX.Element {
       case 'financial-points':
         return <FinancialPointsManagement onBack={handleBack} />
       case 'attendance-analysis':
-        return <PlaceholderPage title="考勤数据分析" onBack={handleBack} />
+        return <AttendanceAnalysis onBack={handleBack} />
       case 'annual-report':
         return <PlaceholderPage title="年度统计报表" onBack={handleBack} />
       case 'material-management':
