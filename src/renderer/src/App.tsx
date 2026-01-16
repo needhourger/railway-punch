@@ -6,6 +6,7 @@ import Login from './components/login'
 import HomePage from './components/home-page'
 import FinancialPointsManagement from './components/financial-points-management'
 import AttendanceAnalysis from './components/attendance-analysis'
+import MaterialManagement from './components/material-management'
 import PlaceholderPage from './components/placeholder-page'
 import { Page } from './context/app-context'
 
@@ -44,7 +45,7 @@ export default function App(): React.JSX.Element {
       case 'annual-report':
         return <PlaceholderPage title="年度统计报表" onBack={handleBack} />
       case 'material-management':
-        return <PlaceholderPage title="物资统筹管理" onBack={handleBack} />
+        return <MaterialManagement onBack={handleBack} />
       case 'home':
       default:
         return <HomePage onNavigate={handleNavigate} />

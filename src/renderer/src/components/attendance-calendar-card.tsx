@@ -23,9 +23,7 @@ export default function AttendanceCalendarCard(): React.JSX.Element {
   const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六']
   const [dayOfMonth, setDayOfMonth] = React.useState<Date[]>([])
   const [emptyDays, setEmptyDays] = React.useState<number>(0)
-  const [attendanceData, setAttendanceData] = React.useState<
-    Record<string, AttendanceStatus>
-  >({})
+  const [attendanceData, setAttendanceData] = React.useState<Record<string, AttendanceStatus>>({})
   const [refreshKey, setRefreshKey] = React.useState(0)
 
   React.useEffect(() => {
@@ -120,9 +118,7 @@ export default function AttendanceCalendarCard(): React.JSX.Element {
           {date.getDate()}
         </div>
         {statusDisplay && (
-          <div
-            className={`font-bold text-sm px-2 py-1 rounded ${statusDisplay.bgClass} mt-2`}
-          >
+          <div className={`font-bold text-sm px-2 py-1 rounded ${statusDisplay.bgClass} mt-2`}>
             {statusDisplay.text}
           </div>
         )}

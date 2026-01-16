@@ -1,6 +1,11 @@
 import React, { createContext } from 'react'
 
-export type Page = 'home' | 'financial-points' | 'attendance-analysis' | 'annual-report' | 'material-management'
+export type Page =
+  | 'home'
+  | 'financial-points'
+  | 'attendance-analysis'
+  | 'annual-report'
+  | 'material-management'
 
 interface AppContextType {
   users: string[]
