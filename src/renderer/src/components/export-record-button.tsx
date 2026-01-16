@@ -228,7 +228,7 @@ export default function ExportRecordButton(): React.JSX.Element {
               </DemoContainer>
             </LocalizationProvider>
           ) : currentConfig.requiresMonthSelection ? (
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4 items-center py-2">
               <FormControl>
                 <InputLabel id="export-year-select-label">年份</InputLabel>
                 <Select
