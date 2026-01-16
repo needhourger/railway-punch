@@ -89,8 +89,6 @@ export default function ExportRecordButton(): React.JSX.Element {
     if (year === undefined || month === undefined) return
 
     const monthDays = getMonthDays(year, month)
-    const startDate = monthDays[0]
-    const endDate = monthDays[monthDays.length - 1]
 
     const outputData: Record<string, string[]> = {}
     for (const username of users) {
@@ -123,7 +121,7 @@ export default function ExportRecordButton(): React.JSX.Element {
     }
 
     const outputFileName = `${year}-${month + 1}-attendance.xlsx`
-    await window.api.exportAttendanceData(startDate, endDate, outputData, outputFileName)
+    await window.api.exportAttendanceData(outputData, outputFileName)
   }
 
   const handleAnnualReportExport = async (): Promise<void> => {

@@ -24,7 +24,7 @@ export default function AttendanceCalendarCard(): React.JSX.Element {
   const [dayOfMonth, setDayOfMonth] = React.useState<Date[]>([])
   const [emptyDays, setEmptyDays] = React.useState<number>(0)
   const [attendanceData, setAttendanceData] = React.useState<Record<string, AttendanceStatus>>({})
-  const [refreshKey, setRefreshKey] = React.useState(0)
+  const [refreshKey] = React.useState(0)
 
   React.useEffect(() => {
     const currentYear = new Date().getFullYear()
@@ -109,8 +109,6 @@ export default function AttendanceCalendarCard(): React.JSX.Element {
 
   const DayStatusLabel: React.FC<{ date: Date }> = ({ date }) => {
     const statusDisplay = getStatusDisplay(date)
-    const dateStr = getDateString(date)
-    const status = attendanceData[dateStr]
 
     return (
       <div className="flex items-start justify-between px-2 py-4 h-24">

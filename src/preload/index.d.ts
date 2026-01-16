@@ -12,8 +12,6 @@ declare global {
         filename: string
       ) => Promise<any>
       exportAttendanceData: (
-        startDate: Date,
-        endDate: Date,
         data: Record<string, string[]>,
         filename: string
       ) => Promise<any>
