@@ -2,7 +2,6 @@ import { join } from 'path'
 import { app, shell, BrowserWindow, ipcMain, nativeTheme, dialog } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import icsFile from '../../resources/cn_zh.ics?asset'
 import * as fs from 'node:fs'
 import { convertIcsCalendar, IcsCalendar } from 'ts-ics'
 import { Conf } from 'electron-conf/main'
@@ -11,6 +10,53 @@ import * as exceljs from 'exceljs/dist/es5'
 
 const conf = new Conf()
 conf.registerRendererListener()
+
+const ICS_URL = 'https://calendars.icloud.com/holidays/cn_zh.ics'
+const CACHE_EXPIRY_DAYS = 180 // 6 个月
+const CACHE_FILE = path.join(app.getPath('userData'), 'cn_zh.ics.cache')
+const CACHE_META_FILE = path.join(app.getPath('userData'), 'cn_zh.ics.meta.json')
+
+// 检查缓存是否有效
+function isCacheValid(): boolean {
+  try {
+    if (!fs.existsSync(CACHE_FILE) || !fs.existsSync(CACHE_META_FILE)) {
+      return false
+    }
+    const meta = JSON.parse(fs.readFileSync(CACHE_META_FILE, 'utf-8'))
+    const cacheTime = new Date(meta.timestamp)
+    const now = new Date()
+    const daysDiff = (now.getTime() - cacheTime.getTime()) / (1000 * 60 * 60 * 24)
+    return daysDiff < CACHE_EXPIRY_DAYS
+  } catch {
+    return false
+  }
+}
+
+// 读取缓存
+function readCache(): string | null {
+  try {
+    if (fs.existsSync(CACHE_FILE)) {
+      return fs.readFileSync(CACHE_FILE, 'utf-8')
+    }
+  } catch (error) {
+    console.error('Error reading cache:', error)
+  }
+  return null
+}
+
+// 写入缓存
+function writeCache(data: string): void {
+  try {
+    fs.writeFileSync(CACHE_FILE, data, 'utf-8')
+    fs.writeFileSync(
+      CACHE_META_FILE,
+      JSON.stringify({ timestamp: new Date().toISOString() }),
+      'utf-8'
+    )
+  } catch (error) {
+    console.error('Error writing cache:', error)
+  }
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -73,7 +119,7 @@ app.whenReady().then(() => {
     return nativeTheme.shouldUseDarkColors
   })
 
-  ipcMain.handle('export-file', async (event, startDate, endDate, data, filename) => {
+  ipcMain.handle('export-file', async (_event, startDate, endDate, data, filename) => {
     try {
       const selectResult = await dialog.showOpenDialog({
         title: '选择模板文件',
@@ -154,13 +200,37 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('load-ics', async (event): Promise<IcsCalendar | null> => {
-    console.log(event)
+  ipcMain.handle('load-ics', async (): Promise<IcsCalendar | null> => {
+    // 检查缓存是否有效
+    if (isCacheValid()) {
+      const cachedData = readCache()
+      if (cachedData) {
+        return convertIcsCalendar(undefined, cachedData)
+      }
+    }
+
+    // 从 URL 获取最新数据
     try {
-      const data = fs.readFileSync(icsFile, 'utf-8')
+      const response = await fetch(ICS_URL)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.text()
+
+      // 更新缓存
+      writeCache(data)
+
       return convertIcsCalendar(undefined, data)
     } catch (error) {
-      console.error('Error reading file:', error)
+      console.error('Error fetching ICS file:', error)
+
+      // 降级方案：如果网络失败但缓存存在，使用缓存（即使过期）
+      const cachedData = readCache()
+      if (cachedData) {
+        console.log('Network failed, using expired cache as fallback')
+        return convertIcsCalendar(undefined, cachedData)
+      }
+
       throw error
     }
   })
