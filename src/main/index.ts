@@ -173,16 +173,16 @@ app.whenReady().then(() => {
               const userData = data[rowUsername]
               if (userData) {
                 userData.map((item, index) => {
-                  if (index % LINE_BREAK === 0) {
+                  if (index > 0 && index % LINE_BREAK === 0) {
                     worksheet.getRow(currentRow - 1).commit()
                     currentRow += 1
                   }
                   worksheet
-                    .getRow(currentRow - 1)
+                    .getRow(currentRow)
                     .getCell(NAME_COL + ((index % LINE_BREAK) + 1)).value = item
                   // console.log(`write item for ${currentRow}-${NAME_COL + index + 1}`, item)
                 })
-                worksheet.getRow(currentRow - 1).commit()
+                worksheet.getRow(currentRow).commit()
               }
             }
             currentRow += 1
