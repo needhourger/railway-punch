@@ -119,7 +119,7 @@ app.whenReady().then(() => {
     return nativeTheme.shouldUseDarkColors
   })
 
-  ipcMain.handle('export-file', async (_event, startDate, endDate, data, filename) => {
+  ipcMain.handle('financial-points:export', async (_event, startDate, endDate, data, filename) => {
     try {
       const selectResult = await dialog.showOpenDialog({
         title: '选择模板文件',
