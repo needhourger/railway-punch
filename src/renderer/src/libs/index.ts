@@ -18,3 +18,20 @@ export function checkRestDay(date: Date, events: IcsEvent[] | null): boolean {
   }
   return date.getDay() === 6 || date.getDay() === 7
 }
+
+function hashString(str: string): number {
+  let hash = 5381
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) + hash + str.charCodeAt(i)
+    hash = hash & hash
+  }
+  return Math.abs(hash)
+}
+
+export function getTagColor(tagName: string): string {
+  const hash = hashString(tagName)
+  const hue = hash % 360
+  const saturation = 65
+  const lightness = 50
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+}
