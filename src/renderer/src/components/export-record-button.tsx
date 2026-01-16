@@ -92,22 +92,31 @@ export default function ExportRecordButton(): React.JSX.Element {
     const startDate = monthDays[0]
     const endDate = monthDays[monthDays.length - 1]
 
-    const outputData: Record<string, Record<string, AttendanceStatus>> = {}
+    const outputData: Record<string, string[]> = {}
     for (const username of users) {
       const userAttendanceData = (await store.get(`attendance.${username}`)) as
         | Record<string, AttendanceStatus>
         | undefined
 
       if (!userAttendanceData) {
-        outputData[username] = {}
+        outputData[username] = []
         continue
       }
 
-      const filteredData: Record<string, AttendanceStatus> = {}
+      const filteredData: string[] = []
+      const textMap: Record<AttendanceStatus, string> = {
+        day: '日',
+        night: '夜',
+        rest: '休',
+        annual: '年'
+      }
       for (const date of monthDays) {
         const dateStr = getDateString(date)
-        if (userAttendanceData[dateStr]) {
-          filteredData[dateStr] = userAttendanceData[dateStr]
+        const status = userAttendanceData[dateStr]
+        if (status) {
+          filteredData.push(textMap[status])
+        } else {
+          filteredData.push('')
         }
       }
       outputData[username] = filteredData

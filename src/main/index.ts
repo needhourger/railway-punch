@@ -119,6 +119,59 @@ app.whenReady().then(() => {
     return nativeTheme.shouldUseDarkColors
   })
 
+  ipcMain.handle(
+    'attendance-data:export',
+    async (_event, startDate, endDate, outputData, outputFileName) => {
+      try {
+        const selectResult = await dialog.showOpenDialog({
+          title: '选择模板文件',
+          defaultPath: path.join(app.getPath('downloads')),
+          filters: [
+            { name: 'excel', extensions: ['xls', 'xlsx'] },
+            { name: '所有文件', extensions: ['*'] }
+          ]
+        })
+        if (!selectResult.canceled && selectResult.filePaths) {
+          const templatePath = path.resolve(selectResult.filePaths[0])
+          const workbook = new exceljs.Workbook()
+          await workbook.xlsx.readFile(templatePath)
+          const outputResult = await dialog.showSaveDialog({
+            title: '选择输出文件',
+            defaultPath: path.join(app.getPath('downloads'), outputFileName)
+          })
+          if (!outputResult.canceled && outputResult.filePath) {
+            const worksheet = workbook.getWorksheet(1)
+            const START_ROW = 8
+            const NAME_COL = 2
+            let currentRow = START_ROW
+            let rowUsername = worksheet.getRow(currentRow).getCell(NAME_COL).value
+            do {
+              console.log(rowUsername)
+              if (rowUsername in outputData) {
+                const userData = outputData[rowUsername]
+                if (userData) {
+                  userData.map((item, index) => {
+                    worksheet.getRow(currentRow).getCell(NAME_COL + index + 3).value = item
+                  })
+                  worksheet.getRow(currentRow).commit()
+                }
+              }
+              currentRow += 1
+              rowUsername = worksheet.getRow(currentRow).getCell(NAME_COL).value
+            } while (rowUsername && rowUsername !== '')
+            workbook.xlsx.writeFile(outputResult.filePath)
+            console.log('write file')
+            return { success: true, filePath: outputResult.filePath }
+          }
+        }
+      } catch (error) {
+        console.log(error)
+        return { success: false, message: error }
+      }
+      return { success: false, message: '用户取消了保存' }
+    }
+  )
+
   ipcMain.handle('financial-points:export', async (_event, startDate, endDate, data, filename) => {
     try {
       const selectResult = await dialog.showOpenDialog({
@@ -233,11 +286,6 @@ app.whenReady().then(() => {
 
       throw error
     }
-  })
-
-  ipcMain.handle('attendance-data:export', async (_event, ..._args) => {
-    // TODO: 实现考勤数据导出功能
-    return { success: false, message: '功能开发中' }
   })
 
   createWindow()
