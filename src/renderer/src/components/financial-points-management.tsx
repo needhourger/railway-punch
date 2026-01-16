@@ -13,7 +13,8 @@ export default function FinancialPointsManagement({
 }: FinancialPointsManagementProps): React.JSX.Element {
   return (
     <div className="min-h-full overflow-y-auto px-10 pb-20">
-      <div className="mb-6">
+      <div className="mb-6 flex justify-between items-center">
+        <h2 className="text-3xl font-bold">财务积分管理</h2>
         <Button
           startIcon={<ArrowBack />}
           onClick={onBack}
