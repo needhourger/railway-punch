@@ -7,14 +7,13 @@ import HomePage from './components/home-page'
 import FinancialPointsManagement from './components/financial-points-management'
 import AttendanceAnalysis from './components/attendance-analysis'
 import PlaceholderPage from './components/placeholder-page'
+import { Page } from './context/app-context'
 
 const theme = createTheme({
   colorSchemes: {
     dark: true
   }
 })
-
-type Page = 'home' | 'financial-points' | 'attendance-analysis' | 'annual-report' | 'material-management'
 
 export default function App(): React.JSX.Element {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -64,7 +63,7 @@ export default function App(): React.JSX.Element {
 
   return (
     <ThemeProvider theme={theme}>
-      <AppContextProvider>
+      <AppContextProvider currentPage={currentPage} setCurrentPage={setCurrentPage}>
         <div className="h-screen w-screen flex flex-col py-8">
           <BrandTitle />
           {renderPage()}

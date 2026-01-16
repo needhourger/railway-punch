@@ -8,29 +8,27 @@ import { getDateString } from '@renderer/libs'
 import useAppContext from '@renderer/context/app-context'
 import store from '@renderer/store'
 import { PunchRecord } from '@renderer/types'
+import { Page } from '@renderer/context/app-context'
+
+interface ExportParams {
+  startDate?: Date | null
+  endDate?: Date | null
+}
+
+type ExportHandler = (params: ExportParams) => Promise<void>
+
+interface ExportConfig {
+  handler: ExportHandler
+  requiresDateRange: boolean
+  dialogTitle: string
+}
 
 export default function ExportRecordButton(): React.JSX.Element {
-  const { users, currentYear, currentMonth } = useAppContext()
+  const { users, currentYear, currentMonth, currentPage } = useAppContext()
 
   const [open, setOpen] = React.useState(false)
   const [startDate, setStartDate] = React.useState<Date | null>(null)
   const [endDate, setEndDate] = React.useState<Date | null>(null)
-
-  React.useEffect(() => {
-    const lastMonth = dayjs(`${currentYear}-${currentMonth + 1}`)
-      .subtract(1, 'month')
-      .date(26)
-      .toDate()
-    setStartDate(lastMonth)
-    const thisMonth = dayjs(`${currentYear}-${currentMonth + 1}`)
-      .date(25)
-      .toDate()
-    setEndDate(thisMonth)
-  }, [currentYear, currentMonth])
-
-  const handleExportBtnClick = (): void => {
-    setOpen(true)
-  }
 
   const getSingleUserOutput = async (
     username: string,
@@ -54,7 +52,8 @@ export default function ExportRecordButton(): React.JSX.Element {
     return outputData
   }
 
-  const handleOutput = async (start: Date, end: Date): Promise<void> => {
+  const handleFinancialPointsExport = async (params: ExportParams): Promise<void> => {
+    const { startDate: start, endDate: end } = params
     if (!start || !end) return
     if (start > end) return
 
@@ -69,13 +68,74 @@ export default function ExportRecordButton(): React.JSX.Element {
     window.api.exportFile(start, end, outputData, outputFileName)
   }
 
+  const handleAttendanceAnalysisExport = async (_params: ExportParams): Promise<void> => {
+    // TODO: 实现考勤分析导出功能
+  }
+
+  const handleAnnualReportExport = async (_params: ExportParams): Promise<void> => {
+    // TODO: 实现年度报表导出功能
+  }
+
+  const handleMaterialManagementExport = async (_params: ExportParams): Promise<void> => {
+    // TODO: 实现物资管理导出功能
+  }
+
+  const exportConfigs: Record<Page, ExportConfig> = {
+    'financial-points': {
+      handler: handleFinancialPointsExport,
+      requiresDateRange: true,
+      dialogTitle: '选择导出日期范围'
+    },
+    'attendance-analysis': {
+      handler: handleAttendanceAnalysisExport,
+      requiresDateRange: false,
+      dialogTitle: '导出考勤分析数据'
+    },
+    'annual-report': {
+      handler: handleAnnualReportExport,
+      requiresDateRange: false,
+      dialogTitle: '导出年度报表'
+    },
+    'material-management': {
+      handler: handleMaterialManagementExport,
+      requiresDateRange: false,
+      dialogTitle: '导出物资管理数据'
+    },
+    home: {
+      handler: async () => {},
+      requiresDateRange: false,
+      dialogTitle: '导出'
+    }
+  }
+
+  const currentConfig = exportConfigs[currentPage]
+
+  React.useEffect(() => {
+    if (currentConfig.requiresDateRange) {
+      const lastMonth = dayjs(`${currentYear}-${currentMonth + 1}`)
+        .subtract(1, 'month')
+        .date(26)
+        .toDate()
+      setStartDate(lastMonth)
+      const thisMonth = dayjs(`${currentYear}-${currentMonth + 1}`)
+        .date(25)
+        .toDate()
+      setEndDate(thisMonth)
+    } else {
+      setStartDate(null)
+      setEndDate(null)
+    }
+  }, [currentYear, currentMonth, currentConfig.requiresDateRange])
+
+  const handleExportBtnClick = (): void => {
+    setOpen(true)
+  }
+
   const handleExport = async (): Promise<void> => {
-    if (!startDate || !endDate) return
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-    console.log('start', start)
-    console.log('end', end)
-    await handleOutput(start, end)
+    if (currentConfig.requiresDateRange) {
+      if (!startDate || !endDate) return
+    }
+    await currentConfig.handler({ startDate, endDate })
     setOpen(false)
   }
 
@@ -83,22 +143,26 @@ export default function ExportRecordButton(): React.JSX.Element {
     <React.Fragment>
       <Button onClick={handleExportBtnClick}>导出记录</Button>
       <Dialog open={open}>
-        <DialogTitle>选择导出日期范围</DialogTitle>
+        <DialogTitle>{currentConfig.dialogTitle}</DialogTitle>
         <DialogContent>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DateRangePicker']}>
-              <DatePicker
-                label="开始日期"
-                value={startDate ? dayjs(startDate) : null}
-                onChange={(value) => setStartDate(value ? value.toDate() : null)}
-              />
-              <DatePicker
-                label="结束日期"
-                value={endDate ? dayjs(endDate) : null}
-                onChange={(value) => setEndDate(value ? value.toDate() : null)}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
+          {currentConfig.requiresDateRange ? (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DateRangePicker']}>
+                <DatePicker
+                  label="开始日期"
+                  value={startDate ? dayjs(startDate) : null}
+                  onChange={(value) => setStartDate(value ? value.toDate() : null)}
+                />
+                <DatePicker
+                  label="结束日期"
+                  value={endDate ? dayjs(endDate) : null}
+                  onChange={(value) => setEndDate(value ? value.toDate() : null)}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          ) : (
+            <div>导出功能开发中...</div>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>取消</Button>

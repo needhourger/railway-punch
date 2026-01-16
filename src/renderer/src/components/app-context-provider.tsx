@@ -1,18 +1,26 @@
 import React from 'react'
-import { AppContext } from '@renderer/context/app-context'
+import { AppContext, Page } from '@renderer/context/app-context'
 import store from '@renderer/store'
 
 interface AppContextProviderProps {
   children: React.ReactNode
+  currentPage?: Page
+  setCurrentPage?: (page: Page) => void
 }
 
 export default function AppContextProvider({
-  children
+  children,
+  currentPage: externalCurrentPage,
+  setCurrentPage: externalSetCurrentPage
 }: AppContextProviderProps): React.JSX.Element {
   const [users, setUsers] = React.useState<string[]>([])
   const [currentUser, setCurrentUser] = React.useState('')
   const [currentYear, setCurrentYear] = React.useState<number>(new Date().getFullYear())
   const [currentMonth, setCurrentMonth] = React.useState<number>(new Date().getMonth())
+  const [internalCurrentPage, setInternalCurrentPage] = React.useState<Page>('home')
+
+  const currentPage = externalCurrentPage ?? internalCurrentPage
+  const setCurrentPage = externalSetCurrentPage ?? setInternalCurrentPage
 
   React.useEffect(() => {
     refreshUsers()
@@ -59,7 +67,9 @@ export default function AppContextProvider({
         currentYear,
         setCurrentYear,
         currentMonth,
-        setCurrentMonth
+        setCurrentMonth,
+        currentPage,
+        setCurrentPage
       }}
     >
       {children}
