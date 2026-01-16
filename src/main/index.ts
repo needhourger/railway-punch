@@ -235,6 +235,11 @@ app.whenReady().then(() => {
     }
   })
 
+  ipcMain.handle('attendance-data:export', async (_event, ..._args) => {
+    // TODO: 实现考勤数据导出功能
+    return { success: false, message: '功能开发中' }
+  })
+
   createWindow()
 
   app.on('activate', function () {

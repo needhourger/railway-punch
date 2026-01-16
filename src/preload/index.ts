@@ -6,7 +6,8 @@ exposeConf()
 // Custom APIs for renderer
 const api = {
   exportFinancialPoints: (startDate, endDate, data, filename) =>
-    ipcRenderer.invoke('financial-points:export', startDate, endDate, data, filename)
+    ipcRenderer.invoke('financial-points:export', startDate, endDate, data, filename),
+  exportAttendanceData: (...args) => ipcRenderer.invoke('attendance-data:export', ...args)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
