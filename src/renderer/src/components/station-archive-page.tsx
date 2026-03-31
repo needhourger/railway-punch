@@ -46,7 +46,9 @@ const stationNames = [
   '合福南陵',
   '合福铜陵北'
 ]
-const alertStations = new Set(['新河镇'])
+const alertStations = new Map<string, string>([
+  ['新河镇', '检测到今年需要进行电源屏年检和电子集中检修']
+])
 
 export default function StationArchivePage({
   onBack,
@@ -87,9 +89,10 @@ export default function StationArchivePage({
                 当前存在以下站点告警：
               </Typography>
               <ul className="list-disc list-inside space-y-1 pl-1">
-                {Array.from(alertStations).map((name) => (
-                  <li key={name} className="text-base">
-                    {name}
+                {Array.from(alertStations.entries()).map(([name, detail]) => (
+                  <li key={name} className="text-base leading-relaxed">
+                    <span className="font-semibold">{name}</span>
+                    <span>：{detail}</span>
                   </li>
                 ))}
               </ul>
