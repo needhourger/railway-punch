@@ -157,6 +157,12 @@ export default function ExportRecordButton(): React.JSX.Element {
       requiresMonthSelection: false,
       dialogTitle: '导出物资管理数据'
     },
+    'station-archive': {
+      handler: async () => {},
+      requiresDateRange: false,
+      requiresMonthSelection: false,
+      dialogTitle: '导出'
+    },
     home: {
       handler: async () => {},
       requiresDateRange: false,
