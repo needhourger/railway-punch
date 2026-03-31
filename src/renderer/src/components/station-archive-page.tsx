@@ -35,6 +35,7 @@ const stationNames = [
   '合福南陵',
   '合福铜陵北'
 ]
+const alertStations = new Set(['新河镇'])
 
 export default function StationArchivePage({
   onBack,
@@ -42,7 +43,9 @@ export default function StationArchivePage({
 }: StationArchivePageProps): React.JSX.Element {
   const [keyword, setKeyword] = React.useState('')
 
-  const filteredStations = stationNames.filter((stationName) => stationName.includes(keyword.trim()))
+  const filteredStations = stationNames.filter((stationName) =>
+    stationName.includes(keyword.trim())
+  )
 
   return (
     <div className="w-full h-full max-w-6xl mx-auto px-10 flex flex-col">
@@ -61,19 +64,30 @@ export default function StationArchivePage({
           fullWidth
         />
       </div>
-      <div className="flex-1 overflow-y-auto pr-1">
+      <div className="flex-1 overflow-y-auto pr-1 py-4">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredStations.map((stationName) => (
-            <Card key={stationName} className="hover:shadow-lg transition-shadow">
-              <CardActionArea onClick={() => onNavigateStation(stationName)} className="h-full p-2">
-                <CardContent className="flex items-center justify-center min-h-[88px]">
-                  <Typography variant="h6" className="text-center font-semibold">
-                    {stationName}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
+          {filteredStations.map((stationName) => {
+            const hasAlert = alertStations.has(stationName)
+            return (
+              <div
+                key={stationName}
+                className={`station-alert-wrapper ${hasAlert ? 'station-alert-glow' : ''}`}
+              >
+                <Card className="hover:shadow-lg transition-shadow h-full">
+                  <CardActionArea
+                    onClick={() => onNavigateStation(stationName)}
+                    className="h-full p-2"
+                  >
+                    <CardContent className="flex items-center justify-center min-h-[88px]">
+                      <Typography variant="h6" className="text-center font-semibold">
+                        {stationName}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

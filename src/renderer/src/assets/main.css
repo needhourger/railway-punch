@@ -68,3 +68,29 @@ body {
   justify-content: center;
   flex-direction: column;
 }
+
+@keyframes station-alert-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
+}
+
+.station-alert-wrapper {
+  position: relative;
+  border-radius: 12px;
+}
+
+.station-alert-glow::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  inset: -2px;
+  border-radius: 14px;
+  animation: station-alert-pulse 2.2s ease-in-out infinite;
+}
