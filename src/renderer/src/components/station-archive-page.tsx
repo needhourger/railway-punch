@@ -1,5 +1,16 @@
 import { ArrowBack } from '@mui/icons-material'
-import { Button, Card, CardActionArea, CardContent, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  Card,
+  CardActionArea,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Typography
+} from '@mui/material'
 import React from 'react'
 
 interface StationArchivePageProps {
@@ -42,6 +53,7 @@ export default function StationArchivePage({
   onNavigateStation
 }: StationArchivePageProps): React.JSX.Element {
   const [keyword, setKeyword] = React.useState('')
+  const [alertDialogOpen, setAlertDialogOpen] = React.useState(alertStations.size > 0)
 
   const filteredStations = stationNames.filter((stationName) =>
     stationName.includes(keyword.trim())
@@ -55,7 +67,40 @@ export default function StationArchivePage({
           返回
         </Button>
       </div>
-      <div className="mb-4">
+      <Dialog
+        open={alertDialogOpen}
+        onClose={() => setAlertDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <Typography variant="h5" className="font-bold">
+            站点告警提示
+          </Typography>
+        </DialogTitle>
+        <DialogContent dividers>
+          {alertStations.size === 0 ? (
+            <Typography variant="body1">当前无站点告警。</Typography>
+          ) : (
+            <>
+              <Typography variant="subtitle1" className="mb-3 font-semibold">
+                当前存在以下站点告警：
+              </Typography>
+              <ul className="list-disc list-inside space-y-1 pl-1">
+                {Array.from(alertStations).map((name) => (
+                  <li key={name} className="text-base">
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAlertDialogOpen(false)}>我已知晓</Button>
+        </DialogActions>
+      </Dialog>
+      <div className="mb-4 mt-2">
         <TextField
           value={keyword}
           onChange={(event) => setKeyword(event.target.value)}
