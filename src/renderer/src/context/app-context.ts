@@ -7,6 +7,7 @@ export type Page =
   | 'annual-report'
   | 'material-management'
   | 'station-archive'
+  | `station-archive-detail:${string}`
 
 interface AppContextType {
   users: string[]
