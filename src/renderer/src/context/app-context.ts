@@ -6,6 +6,7 @@ export type Page =
   | 'attendance-analysis'
   | 'annual-report'
   | 'material-management'
+  | 'station-archive'
 
 interface AppContextType {
   users: string[]

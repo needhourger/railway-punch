@@ -8,6 +8,7 @@ import FinancialPointsManagement from './components/financial-points-management'
 import AttendanceAnalysis from './components/attendance-analysis'
 import MaterialManagement from './components/material-management'
 import AnnualReport from './components/annual-report'
+import PlaceholderPage from './components/placeholder-page'
 import { Page } from './context/app-context'
 
 const theme = createTheme({
@@ -46,6 +47,8 @@ export default function App(): React.JSX.Element {
         return <AnnualReport onBack={handleBack} />
       case 'material-management':
         return <MaterialManagement onBack={handleBack} />
+      case 'station-archive':
+        return <PlaceholderPage title="一站一档" onBack={handleBack} />
       case 'home':
       default:
         return <HomePage onNavigate={handleNavigate} />

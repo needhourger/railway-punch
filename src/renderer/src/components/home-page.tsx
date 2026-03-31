@@ -1,5 +1,5 @@
 import { Card, CardActionArea, CardContent, Typography } from '@mui/material'
-import { AccountBalance, Assessment, BarChart, Inventory } from '@mui/icons-material'
+import { AccountBalance, Assessment, BarChart, Inventory, Folder } from '@mui/icons-material'
 import React from 'react'
 
 interface HomePageProps {
@@ -31,6 +31,12 @@ export default function HomePage({ onNavigate }: HomePageProps): React.JSX.Eleme
       title: '物资统筹管理',
       icon: Inventory,
       description: '物资统筹与管理'
+    },
+    {
+      id: 'station-archive',
+      title: '一站一档',
+      icon: Folder,
+      description: '站点档案管理入口'
     }
   ]
 
